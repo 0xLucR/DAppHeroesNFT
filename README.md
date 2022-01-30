@@ -54,8 +54,9 @@ Os NFT mintado possuem 4 tipos de Classe: A,B,C e D. A chances para cada uma das
 Smart Contract responsável por verificar se o usuário(endereço) está hábil para mintar um NFT, e estando hábil faz uma chamada para o contrato HeroNFT.sol dando continuidade no processo. Para está hábil a mintar um NFT, o usuário precisa ter 10 Tokens HPT em seu balanço e também precisa ter dado a permissão para o endereço do Smart Contract utilizar esses 10 Tokens HPT.
 
 # Project result
-[![Watch the video]](Contracts/videoDApp.mp4)
-
+<p align="center">
+    <img src="assets/to_readme/videoDApp.gif">
+</p>
 # References
 OpenZeppe: https://openzeppelin.com/
 Referência de códigos solidity: https://github.com/OpenZeppelin
