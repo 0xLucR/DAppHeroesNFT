@@ -1,0 +1,79 @@
+﻿@page "/claimToken"
+@implements IAsyncDisposable
+@inject IJSRuntime js
+
+<PageTitle>Claim Token</PageTitle>
+
+<div class="container mt-">
+
+    <h1 class="fw-bold">Claim</h1>
+    <hr>
+    <main class="px-3">
+        <h2>Token: <small>@nameToken</small>
+        </h2>
+        <p>
+            - Claim habilitado somente para carteiras que não possuem HPT.
+        </p>
+        <p>
+            - 10 tokens por claim.
+        </p>
+    </main>
+</div>
+<hr>
+
+<div class="container">
+    <div class="d-flex min-vh-200 justify-content-left align-items-center">
+        <div>
+            <div class="card text-light bg-dark p-4" style="width: 400px">
+                <p class="m-0 p-0">Você tem:</p>
+                <div class="d-flex">
+                    <h3 class="fw-bold mt-1" id="tokenBalance">@balance</h3>
+                    <small class="fw-light mt-1 ms-1 py-2" id="contractName">@nameToken</small>
+                </div>
+                <div class="mt-3">
+                    <button class="btn btn-success w-100" type="button" @onclick="Claim">
+                        Claim tokens
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+
+    private DotNetObjectReference<ClaimToken> dotNetObjectReference;
+    private IJSObjectReference connectDisplayJSObjectReference;
+    private string nameToken = "HPT";
+    private string balance = "0.0";
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            dotNetObjectReference = DotNetObjectReference.Create(this);
+            connectDisplayJSObjectReference = await js.InvokeAsync<IJSObjectReference>("clainToken");
+            await connectDisplayJSObjectReference.InvokeVoidAsync("init", dotNetObjectReference);
+        }
+    }
+
+    private async void Claim()
+    {
+        await connectDisplayJSObjectReference.InvokeVoidAsync("claimToken");
+    }
+
+    [JSInvokable]
+    public void UpdateBalance(string balanceParam)
+    {
+        balance = balanceParam;
+        StateHasChanged();
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        //await connectDisplayJSObjectReference.InvokeVoidAsync("dispose");
+        await connectDisplayJSObjectReference.DisposeAsync();
+        dotNetObjectReference.Dispose();
+    }
+
+}

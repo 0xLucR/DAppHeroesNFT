@@ -1,0 +1,67 @@
+@inject NavigationManager NavigationManager
+@implements IAsyncDisposable
+@inject IJSRuntime js
+@using Models
+
+<button type="button" class="btn btn-secondary" id="btnConnect" @onclick="Connect">@(connectHelp.Connected ?
+    connectHelp.AccountConnected :
+    "Connect")
+</button>
+
+@code {
+    private DotNetObjectReference<ConnectDisplay> dotNetObjectReference;
+    private IJSObjectReference connectDisplayJSObjectReference;
+    private ConnectHelp connectHelp;
+
+    protected override void OnInitialized()
+    {
+        connectHelp = new ConnectHelp();
+    }
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            dotNetObjectReference = DotNetObjectReference.Create(this);
+            connectDisplayJSObjectReference = await js.InvokeAsync<IJSObjectReference>("connectDisplay");
+            var interopResult = await connectDisplayJSObjectReference.InvokeAsync<string>("init", dotNetObjectReference);
+            setAccount(interopResult);
+
+        }
+    }
+
+    private async Task Connect()
+    {
+        var interopResult = await connectDisplayJSObjectReference.InvokeAsync<string>("connect");
+        if (interopResult != null && interopResult != "")
+        {
+            setAccount(interopResult);
+            NavigationManager.NavigateTo("/");
+        }
+
+    }
+
+    [JSInvokable]
+    public async Task ChangeAccount()
+    {
+        var accountConnected = await connectDisplayJSObjectReference.InvokeAsync<string>("getAccountConnectedServer");
+        if (!connectHelp.AccountConnected.Equals(accountConnected))
+        {
+            setAccount(accountConnected);
+            StateHasChanged();
+            NavigationManager.NavigateTo("/");
+        }
+    }
+
+    private void setAccount(string account)
+    {
+        connectHelp.AccountConnected = account ?? "";
+        StateHasChanged();
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        //await connectDisplayJSObjectReference.InvokeVoidAsync("dispose");
+        await connectDisplayJSObjectReference.DisposeAsync();
+        dotNetObjectReference.Dispose();
+    }
+}

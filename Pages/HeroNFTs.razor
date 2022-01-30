@@ -1,0 +1,121 @@
+﻿@page "/heroNFTs"
+
+@implements IAsyncDisposable
+@inject IJSRuntime js
+@using Models
+
+<PageTitle>Hero NFT</PageTitle>
+
+<div class="container mt-">
+
+    <h1 class="fw-bold">Heroes NFT</h1>
+    <hr>
+    <main class="px-3">
+        <p>
+            - São necessário 10 HPT para mintar 1 Hero NFT.
+        </p>
+        <button class="btn btn-primary" @onclick=@MintNFT>
+            Mintar NFT
+        </button>
+    </main>
+</div>
+
+<hr>
+
+<div class="row">
+    @foreach (var item in NFTs)
+    {
+        <div class="col-sm-2">
+            <div class="card">
+                <img src="@item.UrlImg" class="card-img-top" alt="...">
+                <div class="card-body">
+                    <h5 class="card-title">@item.Name</h5>
+                </div>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item">Classe: @item.Class</li>
+                    <li class="list-group-item">Level: @item.Level</li>
+                </ul>
+            </div>
+        </div>
+    }
+</div>
+<!-- Modal -->
+<div class="modal fade" id="modalNFT" tabindex="-1" aria-labelledby="modalNFTLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalNFTLabel"></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row justify-content-md-center">
+                    <div class="col col-sm-6">
+                        <img src=@NFTMintado.UrlImg class="card-img-top" alt="...">
+                        <ul class="list-group">
+                            <li class="list-group-item">Name: @NFTMintado.Name</li>
+                            <li class="list-group-item">Classe: @NFTMintado.Class</li>
+                            <li class="list-group-item">Level: @NFTMintado.Level</li>
+                        </ul>
+                    </div>
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+@code {
+    private DotNetObjectReference<HeroNFTs> dotNetObjectReference;
+    private IJSObjectReference connectDisplayJSObjectReference;
+
+    private List<HeroNFT> NFTs;
+    private HeroNFT NFTMintado;
+
+    protected override void OnInitialized()
+    {
+        NFTs = new List<HeroNFT>();
+        NFTMintado = new HeroNFT();
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            dotNetObjectReference = DotNetObjectReference.Create(this);
+            connectDisplayJSObjectReference = await js.InvokeAsync<IJSObjectReference>("heroNFTs");
+            await connectDisplayJSObjectReference.InvokeVoidAsync("init", dotNetObjectReference);
+        }
+    }
+
+    private async Task MintNFT()
+    {
+        await connectDisplayJSObjectReference.InvokeVoidAsync("mintNFT");
+    }
+
+    [JSInvokable]
+    public void LoadNFT(List<HeroNFT> _nfts)
+    {
+        _nfts.ForEach(x =>
+        {
+            x.UrlImg = $"img/NFT_Class_{x.Class}.jpg";
+        });
+        NFTs = _nfts;
+        StateHasChanged(); ;
+    }
+
+    [JSInvokable]
+    public void SetNftMintado()
+    {
+        NFTMintado = NFTs.LastOrDefault() ?? new HeroNFT();
+        StateHasChanged();
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        //await connectDisplayJSObjectReference.InvokeVoidAsync("dispose");
+        await connectDisplayJSObjectReference.DisposeAsync();
+        dotNetObjectReference.Dispose();
+    }
+}

@@ -1,0 +1,14 @@
+﻿<div class="alert alert-secondary mt-5">
+    <span class="oi oi-pencil me-2" aria-hidden="true"></span>
+    <strong>@Title</strong>
+
+    <span class="text-nowrap">
+        <a href="http://www.freepik.com">Designed by brgfx / Freepik</a>
+    </span>
+</div>
+
+@code {
+    // Demonstrates how a parent component can supply parameters
+    [Parameter]
+    public string? Title { get; set; }
+}
