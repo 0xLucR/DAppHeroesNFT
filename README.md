@@ -1,5 +1,5 @@
 # DAppHeroesNFT
- Projeto DApp que permite interação com Tokens e NFT baseado em blockchain.
+ Projeto DApp que permite interação com Tokens e NFT, baseado em blockchain.
 
 ## Project Goals
 - Cria um DApp
@@ -54,7 +54,7 @@ Os NFT mintado possuem 4 tipos de Classe: A,B,C e D. A chances para cada uma das
 Smart Contract responsável por verificar se o usuário(endereço) está hábil para mintar um NFT, e estando hábil faz uma chamada para o contrato HeroNFT.sol dando continuidade no processo. Para está hábil a mintar um NFT, o usuário precisa ter 10 Tokens HPT em seu balanço e também precisa ter dado a permissão para o endereço do Smart Contract utilizar esses 10 Tokens HPT.
 
 # Project result
-
+[![Watch the video]](Contracts/videoDApp.mp4)
 
 # References
 OpenZeppe: https://openzeppelin.com/
