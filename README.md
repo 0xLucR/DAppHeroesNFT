@@ -1,5 +1,5 @@
 # DAppHeroesNFT
- Projeto DApp que permite interação com Tokens e NFT, baseado em blockchain.
+ Projeto DApp que permite interação com Tokens padrão ERC20 e ERC721, baseado em blockchain.
 
 ## Project Goals
 - Cria um DApp
