@@ -9,7 +9,6 @@
     - Conjunto de Smart Contracts que permite clamar tokens e mintar NFT por meio da aplicação web.
 
 ## Dependencies
-- NodeJS
 - .Net 6.0 
 - Ganache
 - MetaMask
